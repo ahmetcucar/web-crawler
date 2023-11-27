@@ -36,7 +36,6 @@ function getURLSFromHTML(htmlBody, baseURL) {
         }
     })
     return urls
-
 }
 
 module.exports = { normalizeURL, getURLSFromHTML }
