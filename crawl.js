@@ -38,4 +38,33 @@ function getURLSFromHTML(htmlBody, baseURL) {
     return urls
 }
 
-module.exports = { normalizeURL, getURLSFromHTML }
+
+async function crawlPage(baseURL, url, pages) {
+    try {
+        const response = await fetch(baseURL)
+        // Check for fetch errors
+        if (response.status >= 400) {
+            throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
+        }
+        // Check if content type is HTML
+        const contentType = response.headers.get('content-type')
+        if (!contentType.includes('text/html')) {
+            throw new Error(`${url} is not HTML`)
+        }
+        // Process HTML body
+        const htmlBody = await response.text()
+        console.log(htmlBody)
+
+        return pages
+    } catch (error) {
+        console.error(`Error: ${error.message}`)
+        return pages
+    }
+}
+
+
+module.exports = {
+    normalizeURL,
+    getURLSFromHTML,
+    crawlPage
+}

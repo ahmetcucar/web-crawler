@@ -1,6 +1,7 @@
 const { argv } = require('node:process')
+const { crawlPage } = require('./crawl.js')
 
-function main() {
+async function main() {
     // ensure that there is only one command line argument
     if (argv.length !== 3) {
         console.error('Error: exactly one argument is required')
@@ -15,6 +16,12 @@ function main() {
         process.exit(1)
     }
     console.log(`Crawling ${baseURL}...`)
+    console.log()
+
+    // crawl the page
+    await crawlPage(baseURL, baseURL, {})
+    
+
 
 
 }
