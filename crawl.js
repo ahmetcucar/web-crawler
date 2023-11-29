@@ -39,21 +39,46 @@ function getURLSFromHTML(htmlBody, baseURL) {
 }
 
 
-async function crawlPage(baseURL, url, pages) {
+async function crawlPage(baseURL, currURL, pages) {
+    // ensure that currURL is in same domain as baseURL
+    if (new URL(currURL).host !== new URL(baseURL).host) {
+        return pages
+    }
+    const normalizedURL = normalizeURL(currURL)
+    // check if we've already crawled this page
+    if (pages[normalizedURL]) {
+        pages[normalizedURL].count++
+        return pages
+    }
+    // fetch the page
     try {
-        const response = await fetch(baseURL)
-        // Check for fetch errors
+        console.log(`Crawling ${currURL}...`)
+        const response = await fetch(currURL)
+
+        // check for HTTP errors
         if (response.status >= 400) {
             throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
         }
-        // Check if content type is HTML
         const contentType = response.headers.get('content-type')
         if (!contentType.includes('text/html')) {
-            throw new Error(`${url} is not HTML`)
+            throw new Error(`${currURL} is not HTML`)
         }
-        // Process HTML body
+
+        // add page to pages object
+        if (normalizedURL === normalizeURL(baseURL)) {
+            pages[normalizedURL] = { count:0 }
+        } else {
+            pages[normalizedURL] = { count:1 }
+        }
+
+        // Process HTML body and extract links
         const htmlBody = await response.text()
-        console.log(htmlBody)
+        const urls = getURLSFromHTML(htmlBody, baseURL)
+
+        // crawl each URL
+        for (const url of urls) {
+            await crawlPage(baseURL, url, pages)
+        }
 
         return pages
     } catch (error) {

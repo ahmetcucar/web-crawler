@@ -8,6 +8,8 @@ async function main() {
         process.exit(1)
     }
     let baseURL = argv[2]
+    // remove trailing slashes
+    baseURL = baseURL.replace(/\/+$/, "");
     // ensure that the argument is a valid URL
     try {
         new URL(baseURL)
@@ -19,10 +21,9 @@ async function main() {
     console.log()
 
     // crawl the page
-    await crawlPage(baseURL, baseURL, {})
-    
-
-
+    let pages = {}
+    await crawlPage(baseURL, baseURL, pages)
+    console.log(pages)
 
 }
 
