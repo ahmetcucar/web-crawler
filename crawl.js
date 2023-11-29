@@ -82,14 +82,30 @@ async function crawlPage(baseURL, currURL, pages) {
 
         return pages
     } catch (error) {
-        console.error(`Error: ${error.message}`)
+        // console.error(`Error: ${error.message}`)
         return pages
     }
+}
+
+function printReport(pages) {
+    console.log('*'.repeat(50))
+    console.log('Here is your report:')
+    // sort pages by count
+    const sortedPages = Object.entries(pages).sort((a, b) => b[1].count - a[1].count)
+
+    // print report in a formatted table
+    console.log('Page'.padEnd(50) + 'Count')
+    console.log('----'.padEnd(50) + '-----')
+    for (const [url, page] of sortedPages) {
+        console.log(url.padEnd(50) + page.count)
+    }
+
 }
 
 
 module.exports = {
     normalizeURL,
     getURLSFromHTML,
-    crawlPage
+    crawlPage,
+    printReport
 }

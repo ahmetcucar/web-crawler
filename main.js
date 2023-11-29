@@ -1,5 +1,5 @@
 const { argv } = require('node:process')
-const { crawlPage } = require('./crawl.js')
+const { crawlPage, printReport } = require('./crawl.js')
 
 async function main() {
     // ensure that there is only one command line argument
@@ -17,14 +17,11 @@ async function main() {
         console.error('Error: invalid URL')
         process.exit(1)
     }
-    console.log(`Crawling ${baseURL}...`)
     console.log()
-
-    // crawl the page
+    // crawl the page and print the report
     let pages = {}
-    await crawlPage(baseURL, baseURL, pages)
-    console.log(pages)
-
+    pages = await crawlPage(baseURL, baseURL, pages)
+    printReport(pages)
 }
 
 main()
